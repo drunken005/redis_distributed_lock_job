@@ -1,0 +1,8 @@
+# ignore below folders and files
+node_modules/
+.idea/
+logs/*.log
+.DS_Store*
+
+.idea/
+
