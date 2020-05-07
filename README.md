@@ -12,7 +12,7 @@ CREATE TABLE `test_job` (
 COMMENT='test_job';
 ```
 
-#### 生成假数据
+#### 初始化数据
 ```bash
 node insert.js
 ```
