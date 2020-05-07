@@ -18,7 +18,7 @@ class TestRedisLockJob {
         try {
             //lock with key CONSTANTS.RED_LOCK_JOB.LOCK_KEY
             let lock = await this.__lock();
-            if(!lock){
+            if (!lock) {
                 return logger.info(`reqid=${this.parameter.reqid}||job=${this.job}||processNum=${this.processNum}||msg=job break(current task is in progress)`);
             }
             let taskList = await this.fetchTaskList(this.pageNum, this.pageSize);
@@ -52,9 +52,8 @@ class TestRedisLockJob {
      * @returns {Promise<void>}
      */
     async processFlows(taskList) {
-        for (let task of taskList) {
-            logger.info(`task=${JSON.stringify(task)}`)
-        }
+        let ids = _.map(taskList, ({id}) => id);
+        await TestJob.execute(TestJob.update.name, {pid: process.pid, status: 2}, {id: {[TestJob.Op.in]: ids}});
         await Util.sleep(3000);
     }
 
@@ -93,12 +92,12 @@ class TestRedisLockJob {
      * 对任务加锁
      * @private
      */
-    async __lock(){
-        try{
+    async __lock() {
+        try {
             const lock = await redLock.lock(CONSTANTS.RED_LOCK_JOB.LOCK_KEY, CONSTANTS.RED_LOCK_JOB.TTL);
             logger.info(`Current job lock value=${lock.value}`);
             return lock;
-        }catch (error) {
+        } catch (error) {
             logger.stack(error);
             return false;
         }

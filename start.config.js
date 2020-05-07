@@ -1,9 +1,9 @@
-const {RED_LOCK_JOB} = require('./common/constant')
+const {RED_LOCK_JOB} = require('./common/constant');
 module.exports = {
     apps: [
         {
             name:               RED_LOCK_JOB.NAME,
-            script:             "./jobs/index.js",
+            script:             "./index.js",
             watch:              false,
             ignore_watch:       ["node_modules", "log", "report"],
             out_file:           `./log/${RED_LOCK_JOB.NAME}/default.log`,

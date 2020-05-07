@@ -4,7 +4,7 @@
   "description": "",
   "main": "redlock/index.js",
   "scripts": {
-    "start": "rm -rf log/* && pm2 start start.config.js && pm2 logs",
+    "start": "pm2 start start.config.js && pm2 logs",
     "stop": "pm2 stop start.config.js && pm2 delete start.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
