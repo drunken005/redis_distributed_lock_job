@@ -7,7 +7,7 @@ CREATE TABLE `test_job` (
     `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id', 
     `name` varchar(128) DEFAULT NULL COMMENT 'name',
     `status` tinyint(4) unsigned NOT NULL DEFAULT '1' COMMENT 'status',
-	`pid` varchar(128) DEFAULT NULL COMMENT 'pid',
+    `pid` varchar(128) DEFAULT NULL COMMENT 'pid',
      PRIMARY KEY (`id`))
 COMMENT='test_job';
 ```
