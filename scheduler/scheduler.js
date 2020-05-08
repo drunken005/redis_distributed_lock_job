@@ -50,7 +50,7 @@ class SchedulerMiddleware extends EventEmitter {
                     continue;
                 }
                 job.locker = lock;
-                jobList.push(job.execute(lock));
+                jobList.push(job.execute());
             }
             await Promise.all(jobList);
         } catch (error) {
