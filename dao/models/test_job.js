@@ -22,6 +22,12 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: true,
             field: "pid",
+        },
+        updateCount: {
+            type: DataTypes.BIGINT,
+            allowNull: true,
+            defaultValue: 0,
+            field: "update_count",
         }
     }, {
         tableName: "test_job",

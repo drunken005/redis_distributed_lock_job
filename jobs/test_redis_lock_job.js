@@ -52,8 +52,10 @@ class TestRedisLockJob {
      * @returns {Promise<void>}
      */
     async processFlows(taskList) {
-        let ids = _.map(taskList, ({id}) => id);
-        await TestJob.execute(TestJob.update.name, {pid: process.pid, status: 2}, {id: {[TestJob.Op.in]: ids}});
+        for (let task of taskList){
+            await TestJob.execute(TestJob.update.name, {pid: process.pid, status: 2, updateCount: task.updateCount+1}, {id: task.id});
+        }
+        //由于执行上面代码用时很少，所以加个等待3s
         await Util.sleep(3000);
     }
 
