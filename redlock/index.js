@@ -2,7 +2,7 @@ const _ = require('lodash');
 const Redis = require('ioredis');
 const RedLock = require('redlock');
 const logger = require('../common/logger')();
-const {REDIS} = require('../common/constant');
+const {REDIS, REDIS_NAMESPACE} = require('../common/constant');
 
 const clients = () => {
     return _.map(REDIS, (_config) => {
@@ -29,4 +29,17 @@ redLock.on('clientError', function (err) {
     logger.error('A redis error has occurred:', err);
 });
 
-module.exports = redLock;
+
+class RedisLock {
+    static async lock(key, ttl) {
+        let resource = [REDIS_NAMESPACE, key].join('-');
+        try {
+            return await redLock.lock(resource, ttl);
+        } catch (error) {
+            return false;
+        }
+    }
+}
+
+module.exports = RedisLock;
+

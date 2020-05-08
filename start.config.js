@@ -11,7 +11,7 @@ module.exports = {
             merge_logs:         true,
             max_memory_restart: "2G",
             exec_mode:          "fork",
-            instances:          2,
+            instances:          4,
             autorestart:        true
         }
     ]

@@ -3,7 +3,6 @@ const CONSTANTS = require('../common/constant');
 const logger = require('../common/logger')();
 const {Parameter, Util} = require('../common/utils');
 const {TestJob} = require('../dao');
-const redLock = require('../redlock');
 
 
 class TestRedisLockJob {
@@ -14,21 +13,10 @@ class TestRedisLockJob {
     async execute() {
         this.__init__();
         this.__before_job_handler__();
-
         try {
-            //lock with key CONSTANTS.RED_LOCK_JOB.LOCK_KEY
-            let lock = await this.__lock();
-            if (!lock) {
-                return logger.info(`reqid=${this.parameter.reqid}||job=${this.job}||processNum=${this.processNum}||msg=job break(current task is in progress)`);
-            }
             let taskList = await this.fetchTaskList(this.pageNum, this.pageSize);
             this.processNum = taskList.length;
-            if (!_.isArray(taskList) || taskList.length === 0) {
-                return logger.info(`reqid=${this.parameter.reqid}||job=${this.job}||processNum=${this.processNum}||msg=job break(taskList.length=0)`);
-            }
             await this.processFlows(taskList);
-            //unlock
-            return lock.unlock();
         } catch (error) {
             error = _.isObject(error) ? error : {};
             error.reqid = `${this.parameter.reqid}||job=${this.job}.${this.execute.name}()`;
@@ -85,24 +73,10 @@ class TestRedisLockJob {
         let request = {
             reqid: this.parameter.reqid,
             job: this.job,
+            redisLocker: this.locker ? this.locker.value: '',
             msg: "A job begin...",
         };
         logger.in(request);
-    }
-
-    /**
-     * 对任务加锁
-     * @private
-     */
-    async __lock() {
-        try {
-            const lock = await redLock.lock(CONSTANTS.RED_LOCK_JOB.LOCK_KEY, CONSTANTS.RED_LOCK_JOB.TTL);
-            logger.info(`Current job lock value=${lock.value}`);
-            return lock;
-        } catch (error) {
-            logger.stack(error);
-            return false;
-        }
     }
 
     /**
@@ -110,6 +84,8 @@ class TestRedisLockJob {
      * @private
      */
     __after_job_handler__() {
+        //TODO 任务执行完后必须解锁
+        this.locker && this.locker.unlock();
         let cost = Date.now() - this.startTime;
         let average = this.processNum > 0 ? (cost / this.processNum).toFixed(0) : cost;
         let response = {

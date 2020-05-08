@@ -11,6 +11,7 @@ const CONSTANTS = {
                 logging: false
             }
     },
+    REDIS_NAMESPACE: 'TEST',
     REDIS: [  //支持多个redis实例
         {
             host: '127.0.0.1', port: '6379'
@@ -30,7 +31,7 @@ const CONSTANTS = {
         NAME: 'red_lock_job',
         INTERVAL: 10,
         LOCK_KEY: 'red_lock_job',
-        TTL: 10000
+        TTL: 100000
     }
 };
 

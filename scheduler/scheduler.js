@@ -4,8 +4,7 @@ const logger = require("../common/logger")();
 const {Util} = require('../common/utils');
 const {sequelize} = require("../dao");
 const BaseMiddleware = require("./base");
-
-
+const RedisLock = require('../redlock');
 
 class SchedulerMiddleware extends EventEmitter {
     /**
@@ -45,7 +44,13 @@ class SchedulerMiddleware extends EventEmitter {
         try {
             let jobList = [];
             for (let job of this.__job_list__) {
-                jobList.push(job.execute());
+                let lock = await RedisLock.lock(job.job, this.__interval__ * 10);
+                if (!lock) {
+                    logger.info(`Execute job '${job.job}' break, current job is in progress and locked.`);
+                    continue;
+                }
+                job.locker = lock;
+                jobList.push(job.execute(lock));
             }
             await Promise.all(jobList);
         } catch (error) {
