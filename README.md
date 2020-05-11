@@ -8,6 +8,7 @@ CREATE TABLE `test_job` (
     `name` varchar(128) DEFAULT NULL COMMENT 'name',
     `status` tinyint(4) unsigned NOT NULL DEFAULT '1' COMMENT 'status',
     `pid` varchar(128) DEFAULT NULL COMMENT 'pid',
+    `update_count` bigint(20) DEFAULT 0 COMMENT 'update_count',
      PRIMARY KEY (`id`))
 COMMENT='test_job';
 ```
