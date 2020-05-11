@@ -19,7 +19,7 @@ const redLock = new RedLock(
     clients(),
     {
         driftFactor: 0.01, // time in ms
-        retryCount: 2,
+        retryCount: 0,  //for many tasks it's sufficient to attempt a lock with retryCount=0, and treat a failure as the resource being "locked" or (more correctly) "unavailable",
         retryDelay: 150, // time in ms
         retryJitter: 50 // time in ms
     }
